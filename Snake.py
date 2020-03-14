@@ -1,4 +1,4 @@
-import pygame, math, random, matplotlib, gym
+import pygame, math, random, matplotlib, gym, time
 
 __author__ = "21fernando"
 # initialize py game module
@@ -42,7 +42,7 @@ def drawSnake():
 
 
 def checkDeath():
-    if snakeTail[0][0] < 0 or snakeTail[0][0] > Screen_Length or snakeTail[0][1] < 0 or snakeTail[0][1] > Screen_Height:
+    if snakeTail[0][0] < 0 or snakeTail[0][0] >= Screen_Length or snakeTail[0][1] < 0 or snakeTail[0][1] >= Screen_Height:
         return True
     for i in range(1, len(snakeTail)):
         if snakeTail[i][0] == snakeTail[0][0] and snakeTail[i][1] == snakeTail[0][1]:
@@ -110,16 +110,15 @@ def main():
                     userInput = "up"
         if (userInput == "right" and direction != "left" or userInput == "left" and direction != "right" or userInput == "down" and direction != "up" or userInput == "up" and direction != "down"):
             direction = userInput
-        if i%2 == 0:
-            moveSnake(direction)
-            screen.fill((0, 0, 0))
-            drawSnake()
-            drawApple()
-            if checkDeath():
-                break
-            if checkEat():
-                genApple()
-        i += 1
+        moveSnake(direction)
+        screen.fill((0, 0, 0))
+        drawSnake()
+        drawApple()
+        if checkDeath():
+            break
+        if checkEat():
+            genApple()
+        #time.sleep(0.05)
     pygame.quit()
 
 
