@@ -119,7 +119,7 @@ def main():
     walls.append(Wall(0, 0, Screen_Length, 0))
     walls.append(Wall(0, Screen_Height, Screen_Length, Screen_Height))
     walls.append(Wall(Screen_Length, 0, Screen_Length, Screen_Height))
-    a = Avatar(100)
+    a = Avatar(50)
     while running:
         pygame.display.update()
         for event in pygame.event.get():
