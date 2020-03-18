@@ -125,6 +125,28 @@ def mapVal(val, oldMin, oldMax, newMin, newMax):
     return ((val - oldMin) / (oldMax - oldMin)) * (newMax - newMin) + newMin
 
 
+def dist(p1: pygame.math.Vector2, p2: pygame.math.Vector2):
+    return math.sqrt(math.pow((p2.x-p1.x),2) - math.pow((p2.y-p1.y),2) )
+
+
+def lawOfCosines( C, a, b):
+    return math.sqrt(math.pow(a,2) + math.pow(b,2) - 2*a*b*math.cos(math.radians(C)))
+
+'''
+def drawGradientPoly(tl: tuple, tr: tuple, bl: tuple , br: tuple, maxrgb: tuple, minrgb:tuple):
+    num = tr[0] - tl[0]
+    diff = ((maxrgb[0]-minrgb[0])/num,(maxrgb[1]-minrgb[1])/num,(maxrgb[2]-minrgb[2])/num )
+    leftLength = abs(tl[1]-bl[1])
+    rightLength = abs(tr[1]-br[1])
+    growing = ( rightLength > leftLength)
+    prevcolor = minrgb if growing else maxrgb
+    for i in range(int(num)):
+        ydiff  = (tl[1]-tr[1])/num
+        color = tuple(map(lambda i, j: i + j, prevcolor, diff)) if growing else tuple(map(lambda i, j: i - j, prevcolor, diff))
+        pygame.draw.line(screen, color, (tl[0] + i, tl[1]-i*ydiff), (bl[0] + i, bl[1]+i*ydiff) )
+        prevcolor = color'''
+
+
 def main():
     global walls
     running = True
@@ -143,7 +165,6 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-                #pygame.display.quit()
                 break
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RIGHT:
@@ -168,14 +189,38 @@ def main():
         a.show()
         a.showRays()
         rectLength = Screen_Length / a.fov
+        '''critP = []
+        for i in range(len(a.lengths)):
+            if(i == 0 or i == len(a.lengths)-1): critP.append((a.lengths[i], i))
+            else:
+                prod1 = a.lengths[i+1]*lawOfCosines(1, a.lengths[i-1], a.lengths[i])
+                prod2 = a.lengths[i-1]*lawOfCosines(1, a.lengths[i+1], a.lengths[i])
+                if(abs(prod1-prod2)>1):
+                    critP.append((a.lengths[i], i))
+        for point in critP:
+            pygame.draw.line(screen,(255,0,0), (Screen_Length+point[1]*rectLength, 0 ), (Screen_Length+point[1]*rectLength, Screen_Height ))'''
         for i in range(len(a.lengths)):
             r = pygame.Rect(0, 0, 0, 0)
-            r.height = mapVal(a.lengths[i]*2, 0, Screen_Length*2, Screen_Height - 40, 0)
+            r.height = mapVal(a.lengths[i], 0, Screen_Length, Screen_Height - 40, 0)
             r.width = rectLength
             r.center = (Screen_Length + (i * rectLength) - (rectLength / 2), Screen_Height // 2)
-            color = (mapVal(a.lengths[i], 0 , Screen_Height, 255,0), mapVal(a.lengths[i], 0 , Screen_Height, 255,0),mapVal(a.lengths[i], 0 , Screen_Height, 255,0))
+            val = mapVal(a.lengths[i], 0 , Screen_Height, 255,0)
+            color = (val,val,val)
             pygame.draw.rect(screen, color, r)
-            pygame.draw.circle(screen, (255, 0, 0), (int(Screen_Length + (i * rectLength) - (rectLength / 2)), Screen_Height // 2), 1, 1)
+            '''
+            for i in range(1, len(critP)):
+                topLeft = (Screen_Length+critP[i-1][1]*rectLength, Screen_Height//2 - mapVal(a.lengths[i-1]*2, 0, Screen_Length*2, Screen_Height - 40, 0)//2)
+                bottomLeft = (Screen_Length+critP[i-1][1]*rectLength, Screen_Height//2 + mapVal(a.lengths[i-1]*2, 0, Screen_Length*2, Screen_Height - 40, 0)//2)
+                topRight = (Screen_Length+critP[i][1]*rectLength, Screen_Height//2 - mapVal(a.lengths[i]*2, 0, Screen_Length*2, Screen_Height - 40, 0)//2)
+                bottomRight = (Screen_Length+critP[i][1] * rectLength,Screen_Height // 2 + mapVal(a.lengths[i] * 2, 0, Screen_Length * 2, Screen_Height - 40,0) // 2)
+                val1 = mapVal(a.lengths[i-1], 0, Screen_Height, 255, 0)
+                val2 = mapVal(a.lengths[i], 0 , Screen_Height, 255,0)
+                if(val1>val2):
+                    #drawGradientPoly(topLeft, topRight, bottomLeft, bottomRight, (val1,val1,val1),(val2,val2,val2))
+                    pygame.draw.polygon(screen, (val1,val1,val1) , [topLeft, topRight, bottomRight, bottomLeft])
+                else:
+                    #drawGradientPoly(topLeft, topRight, bottomLeft, bottomRight, (val2,val2,val2), (val1,val1,val1))
+                    pygame.draw.polygon(screen, (val2, val2, val2), [topLeft, topRight, bottomRight, bottomLeft])'''
 
     pygame.quit()
 
