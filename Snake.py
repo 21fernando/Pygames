@@ -1,4 +1,4 @@
-import pygame, math, random, matplotlib, gym, time
+import pygame, random, time
 
 __author__ = "21fernando"
 # initialize py game module
@@ -28,6 +28,7 @@ Start_Len = 4
 lengthening = False
 addCount = 0
 
+clock = pygame.time.Clock()
 
 def genSnake():
     global snakeTail
@@ -88,10 +89,13 @@ def moveSnake(d):
 
 def main():
     running = True
-    i = 0
     genSnake()
     genApple()
-    print(checkDeath())
+    for i in range(3,0,-1):
+        print(i ,"...")
+        time.sleep(0.2)
+    print("GO!")
+    time.sleep(0.8)
     while running:
         global direction, movingDirection
         pygame.display.update()
@@ -118,7 +122,7 @@ def main():
             break
         if checkEat():
             genApple()
-        #time.sleep(0.05)
+        clock.tick(10)
     pygame.quit()
 
 
